@@ -1,11 +1,10 @@
 #!/usr/bin/python3.6
 #%matplotlib inline
 
-import matplotlib as mpl
-mpl.style.use('ggplot')
-        
-        
-
+from game import Game
+from boxworld import BoxWorld
+from eightpuzzle import EightPuzzle
+from jealousagents import JealousAgents
 
 if __name__ == '__main__':
     

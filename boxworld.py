@@ -1,4 +1,5 @@
 from abstract import IGame
+from random import randint, shuffle
 
 class BoxWorld(IGame): 
     '''
