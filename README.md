@@ -36,7 +36,7 @@ python __main__.py
     9,7,4
     10,6,4
 
-> ![BoxWorld](data/Figure_1.PNG)
+> ![BoxWorld](data/Figure_1.png)
 
     ======== EightPuzzle ========
 
@@ -62,7 +62,7 @@ python __main__.py
         9,1000,372,308,40
         10,1000,607,545,44
 
-> ![EightPuzzle](data/Figure_1-1.PNG)
+> ![EightPuzzle](data/Figure_1-1.png)
 
     ======== JealousAgents ========
 
@@ -95,5 +95,5 @@ python __main__.py
         (5) Agnt(2) ~~|_|boat|_|~~ Agnt(3)|Actr(2)|Agnt(1)|Actr(3)|Actr(1)
         (6)  ~~|_|boat|_|~~ Agnt(2)|Agnt(3)|Actr(2)|Agnt(1)|Actr(3)|Actr(1)
 
-> ![JealousAgents](data/Figure_1-2.PNG)
+> ![JealousAgents](data/Figure_1-2.png)
 
