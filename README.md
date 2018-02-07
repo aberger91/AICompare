@@ -1,5 +1,5 @@
 # AICompare
-- interfaces for visualizing and comparing artificial intelligence search algorithms
+- an interface for visualizing and comparing A.I. game-playing search algorithms
 
 ***
 
