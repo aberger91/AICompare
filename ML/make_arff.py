@@ -19,11 +19,14 @@ def get_files():
         key = f.split('\\')[-1]
         key = key.replace('.txt', '')
         if key != 'stopwords':
+            parsed_data = [ ]
             data = open(f).read().split('\n\n') # split by paragraph
-            files[key] = data
+            for paragraph in data:
+                parsed_data.append(parse_paragraph(paragraph))
+            files[key] = parsed_data
     return files
 
-def check_stopword_add_(word, li):
+def parse_word(word, li):
     def remove_punctuation(word):
         if word.isalnum():
             return word
@@ -35,30 +38,29 @@ def check_stopword_add_(word, li):
     if word in STOPWORDS or word == '':
         return li
     lemmatized_word = lemmatize(word)
-    #print('Lemmatizing: (%s) => (%s)' % (word, lemmatized_word), end='\r')
     if lemmatized_word in STOPWORDS:
         return li
     li += [ lemmatized_word ]
     return li
 
-def remove_stopwords(paragraph):
+def parse_paragraph(paragraph):
     li = paragraph.replace('\n', ' ').split(' ')
     new_paragraph = [ ]
     for s in li:
         if '--' in s:  # could do this in separate pass
             words = s.split('--')
             for w in words:
-                li = check_stopword_add_(w, new_paragraph)
+                li = parse_word(w, new_paragraph)
             continue
-        li = check_stopword_add_(s, new_paragraph)
+        li = parse_word(s, new_paragraph)
     return ' '.join(new_paragraph)
 
 def get_word_counts(files):
     counts = { }
     for title, book in files.items():
         for paragraph in book:
-            parsed_paragraph = remove_stopwords(paragraph)
-            for w in parsed_paragraph.split(' '):
+            #parsed_paragraph = parse_paragraph(paragraph)
+            for w in paragraph.split(' '):
                 if w == '':
                     continue
                 if w in counts:
@@ -102,7 +104,6 @@ def make_arff(dest_path, n):
         return record
 
     files = get_files()
-
     print('Generating arff file with %d features' % n)
     sampled_sorted_words = get_sampled_sorted_word_list(files, n)
     file_ = make_arff_meta('_author_', files, sampled_sorted_words)

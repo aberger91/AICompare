@@ -1,13 +1,11 @@
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.model_selection import train_test_split, GridSearchCV
 from make_arff import load_arff, get_sampled_sorted_word_list
 from sklearn import metrics
-import itertools
 import numpy as np
+import itertools
 import pickle
-
 
 ARFF_PATH = 'data.arff'
 
@@ -35,11 +33,9 @@ def get_top_n_features(clf, n=10):
     return top10_words
 
 def classify(x_train, x_test, y_train, y_test):
-    param_ranges = [a/10  for a in range(1, 11)]
-    #tuned_parameters = {'penalty': ['l1', 'l2'], 'C': param_ranges}
+    param_ranges = [1/10**a  for a in range(1, 11)] + [0]
     tuned_parameters = {'alpha': param_ranges}
 
-    #model = LogisticRegression(verbose=False)
     model = BernoulliNB()
     grid_search = GridSearchCV(
                     model,
@@ -59,6 +55,7 @@ def classify(x_train, x_test, y_train, y_test):
 
     predictions = clf.predict(x_test)
     report = metrics.classification_report(y_test, predictions, target_names=authors)
+
     accuracy = metrics.accuracy_score(y_test, predictions)
     confusion = metrics.confusion_matrix(y_test, predictions)
 
