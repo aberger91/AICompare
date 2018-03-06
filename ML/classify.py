@@ -18,7 +18,7 @@ def preprocess():
 
     feature_data = [ np.array(x[1:], dtype=int) for x in li_data ]
     targets = [ np.int(authors.index(x[0].decode())) for x in li_data ]  # enumerate this
-    return train_test_split(feature_data, targets, test_size=0.2)
+    return train_test_split(feature_data, targets, test_size=0.1)
 
 def fit(model, x_train, y_train, kwargs):
     clf = model(**kwargs).fit(x_train, y_train)
