@@ -41,7 +41,7 @@ __| Andrew Berger | CS480 | HW5 | 3/6/2018 |__
 ### Evaluation
 
 
-![Classification Report](data/results.png)
+![Classification Report](data/results.PNG)
 
 ![Confusion Matrix](data/confusion.png)
 
