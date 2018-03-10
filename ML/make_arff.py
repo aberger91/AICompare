@@ -32,14 +32,12 @@ def get_files():
         data = open(f).read().split('\n\n') # split by paragraph
         author, title = key.split('-')
         parsed_data = [ ]
-        count = 0
         shuffle(data)
         for paragraph in data[:PARAGRAPH_COUNT]:
             parsed_paragraph = parse_paragraph(paragraph)
             print('\t%s' % parsed_paragraph)
             parsed_data.append(parsed_paragraph)
-            count += 1
-        print('Adding %d words from %s by %s' % (count*WORD_COUNT, title, author))
+        print('Adding %d words from %s by %s' % (len(parsed_data)*WORD_COUNT, title, author))
         if author in files:
             files[author] += parsed_data
         else:
