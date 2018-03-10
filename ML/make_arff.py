@@ -1,9 +1,13 @@
+import os
 import glob
 import pickle
 from scipy.io import arff
 from nltk.stem import WordNetLemmatizer
 from nltk import download
+from random import shuffle
 
+WORD_COUNT = 10
+PARAGRAPH_COUNT = 500
 STOPWORDS_PATH = 'books/stopwords.txt'
 PUNCTUATION = ['"', ':', ',', '.', '!', '?', ';', '(', ')', '\'s', '\'']
 STOPWORDS = open(STOPWORDS_PATH).read().strip('\n').split('\n\n')
@@ -12,18 +16,41 @@ WORDNET_LEMMATIZER = WordNetLemmatizer()
 def lemmatize(s):
     return WORDNET_LEMMATIZER.lemmatize(s)
 
+def printd(d):
+    for k,v in d.items():
+        print(k, v)
+
 def get_files():
     text_files = glob.glob('books/*.txt')
     files = { }
+    sizes = { }
     for f in text_files:
         key = f.split('\\')[-1]
         key = key.replace('.txt', '')
-        if key != 'stopwords':
-            parsed_data = [ ]
-            data = open(f).read().split('\n\n') # split by paragraph
-            for paragraph in data:
-                parsed_data.append(parse_paragraph(paragraph))
-            files[key] = parsed_data
+        if key == 'stopwords':
+            continue
+        data = open(f).read().split('\n\n') # split by paragraph
+        author, title = key.split('-')
+        parsed_data = [ ]
+        count = 0
+        shuffle(data)
+        for paragraph in data[:PARAGRAPH_COUNT]:
+            parsed_paragraph = parse_paragraph(paragraph)
+            print('\t%s' % parsed_paragraph)
+            parsed_data.append(parsed_paragraph)
+            count += 1
+        print('Adding %d words from %s by %s' % (count*WORD_COUNT, title, author))
+        if author in files:
+            files[author] += parsed_data
+        else:
+            files[author] = parsed_data
+        if author in sizes:
+            sizes[author] += os.path.getsize(f)
+        else:
+            sizes[author] = os.path.getsize(f)
+    print('Bytes per Author: ')
+    printd(sizes)
+    print()
     return files
 
 def parse_word(word, li):
@@ -44,9 +71,10 @@ def parse_word(word, li):
     return li
 
 def parse_paragraph(paragraph):
-    li = paragraph.replace('\n', ' ').split(' ')
+    li = [x for x in paragraph.replace('\n', ' ').split(' ') if x != '-']
     new_paragraph = [ ]
-    for s in li:
+    shuffle(li)
+    for s in li[:WORD_COUNT]:
         if '--' in s:  # could do this in separate pass
             words = s.split('--')
             for w in words:
@@ -57,9 +85,8 @@ def parse_paragraph(paragraph):
 
 def get_word_counts(files):
     counts = { }
-    for title, book in files.items():
+    for author, book in files.items():
         for paragraph in book:
-            #parsed_paragraph = parse_paragraph(paragraph)
             for w in paragraph.split(' '):
                 if w == '':
                     continue
@@ -74,8 +101,8 @@ def make_arff_meta(name, files, attributes):
     file_ = '@relation %s\n\n' % name
     print('Adding Relation: %s' % file_, end='\r')
     file_ += '@attribute %s {' % name
-    for title, book in files.items():
-        file_ += title + ', '
+    for author, book in files.items():
+        file_ += author + ', '
     file_ = file_.strip(', ')
     file_ += '}\n\n'
     for word, _ in attributes:
@@ -93,8 +120,8 @@ def get_sampled_sorted_word_list(files, n):
     return sampled_sorted_words
 
 def make_arff(dest_path, n):
-    def make_arff_data_row(title, paragraph, li):
-        record = '%s,' % title
+    def make_arff_data_row(author, paragraph, li):
+        record = '%s,' % author
         for name, count in li:
             if name in paragraph:
                 record += '1,'
@@ -109,9 +136,9 @@ def make_arff(dest_path, n):
     file_ = make_arff_meta('_author_', files, sampled_sorted_words)
 
     file_ += '''\n@data\n'''
-    for title, book in files.items():
+    for author, book in files.items():
         for paragraph in book:
-            record = make_arff_data_row(title, paragraph, sampled_sorted_words)
+            record = make_arff_data_row(author, paragraph, sampled_sorted_words)
             file_ += record + '\n'
     with open(dest_path, 'w') as f:
         f.write(file_)
