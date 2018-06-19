@@ -35,6 +35,9 @@ __| Andrew Berger | CS480 | HW5 | 3/6/2018 |__
     Toolkit). Training and test samples are split such that the model is trained on 9/10 of the data and tested 
     on the remaining 1/10. 
 
+        Paragraphs and words are randomly sampled from each text. This aspect of the training set is included to
+    reduce bias that may be introduced from the size of paragraphs.
+
 ### <u>Execution</u>
 
         Cross validation is used before execution to find the optimal parameters for alpha, the smoothing factor 
